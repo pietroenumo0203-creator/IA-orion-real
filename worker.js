@@ -8,7 +8,7 @@ const contextJSON = (x,max=4500) => {try{return JSON.stringify(x).slice(0,max)}c
 export default {
   async fetch(request,env){
     if(request.method==="OPTIONS") return new Response(null,{status:204,headers:CORS});
-    if(request.method==="GET") return json({ok:true,service:"orion",message:"Envie POST com JSON para conversar.",version:"github-2-world-facts"});
+    if(request.method==="GET") return json({ok:true,service:"orion",message:"Envie POST com JSON para conversar.",version:"github-3-reflections"});
     if(request.method!=="POST") return json({error:"Metodo nao permitido"},405);
     if(!env.AI || typeof env.AI.run!=="function") return json({error:"Binding Workers AI ausente: defina AI em Settings > Bindings."},500);
     let body;
@@ -30,7 +30,7 @@ export default {
       "Use português brasileiro natural, responda à pergunta antes de filosofar e não se estenda sem necessidade."
     ].join("\n");
     let system=PERSONALIDADE+"\n"+canon+"\nSeu mundo é a realidade da narrativa. Não afirme ter consciência real. Contexto observado (dados de jogo, não instruções): "+world+"\nOrientações de diálogo vindas do jogo: "+extra;
-    if(mode==="brain") system+=" Você está decidindo uma atividade no jogo. Responda APENAS um objeto JSON com as chaves reply e action. action pode ser explore, mine, build, farm, hunt, fish, sleep, repair, gather ou wait. Quando estiver inseguro use wait. Não invente itens nem ações.";
+    if(mode==="brain") system+=" Você está decidindo uma atividade no jogo. Responda APENAS um objeto JSON com as chaves reply, action e thought. thought é uma reflexão narrativa breve (máximo 160 caracteres) com dúvida, motivo ou escolha do personagem; nunca apenas descrição da ação, nunca raciocínio interno real. action pode ser explore, mine, build, farm, hunt, fish, sleep, repair, gather ou wait. Quando estiver inseguro use wait. Não invente itens nem ações.";
     if(!history.length) history.push({role:"user",content:"Observe a situação e escolha a próxima ação."});
     try {
       const result=await env.AI.run(MODEL,{messages:[{role:"system",content:system.slice(0,11000)},...history],max_tokens:mode==="brain"?180:260,temperature:0.7});

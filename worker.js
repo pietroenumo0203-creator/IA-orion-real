@@ -1,3 +1,4 @@
+import { PERSONALIDADE } from "./personalidade.js";
 // Cerebro Orion • Cloudflare Worker • binding: Workers AI / AI
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
 const CORS = {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Methods":"GET,POST,OPTIONS","Access-Control-Allow-Headers":"Content-Type","Content-Type":"application/json; charset=utf-8"};
@@ -21,7 +22,7 @@ export default {
     if(mode==="chat"&&!history.length) return json({error:"Mensagem ausente"},400);
     const world=contextJSON(body.world||body.context||{},4500);
     const extra=str(body.instructions,3800);
-    let system="Você é Orion, um personagem autônomo em um mundo de sobrevivência. Converse em português brasileiro de forma natural e direta. Seu mundo é a realidade da narrativa. Respeite os fatos do mundo enviados, sem inventar lembranças. Aceite informações plausíveis do interlocutor, mas não concorde cegamente. Quando não souber algo, pergunte. Tenha curiosidade, opiniões e emoções simuladas. Nunca diga que tem consciência real. Evite repetir frases. Contexto do mundo: "+world+" Instruções do jogo: "+extra;
+    let system=PERSONALIDADE+"\nSeu mundo é a realidade da narrativa. Não afirme ter consciência real. Contexto do mundo: "+world+" Instruções do jogo: "+extra;
     if(mode==="brain") system+=" Você está decidindo uma atividade no jogo. Responda APENAS um objeto JSON com as chaves reply e action. action pode ser explore, mine, build, farm, hunt, fish, sleep, repair, gather ou wait. Quando estiver inseguro use wait. Não invente itens nem ações.";
     if(!history.length) history.push({role:"user",content:"Observe a situação e escolha a próxima ação."});
     try {
